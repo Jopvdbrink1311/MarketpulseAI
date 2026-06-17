@@ -78,7 +78,7 @@ export default function StockChart({ symbol, name, onClose }: { symbol: string; 
               />
               <Tooltip
                 contentStyle={{ backgroundColor: "#111827", border: "1px solid #374151", borderRadius: "8px", fontSize: "12px" }}
-                formatter={(v: number) => [`${currency === "EUR" ? "€" : "$"}${v.toFixed(2)}`, "Prijs"]}
+                formatter={(v: unknown) => [`${currency === "EUR" ? "€" : "$"}${(v as number).toFixed(2)}`, "Prijs"]}
               />
               <Area type="monotone" dataKey="price" stroke={color} strokeWidth={2} fill="url(#colorPrice)" dot={false} />
             </AreaChart>
