@@ -9,6 +9,10 @@ const SYMBOLS = [
   { symbol: "NVDA", name: "NVIDIA" },
   { symbol: "TSLA", name: "Tesla" },
   { symbol: "AMZN", name: "Amazon" },
+  { symbol: "BTC-USD", name: "Bitcoin" },
+  { symbol: "ETH-USD", name: "Ethereum" },
+  { symbol: "SOL-USD", name: "Solana" },
+  { symbol: "BNB-USD", name: "BNB" },
 ]
 
 async function fetchQuote(symbol: string, name: string) {

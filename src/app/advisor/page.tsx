@@ -16,11 +16,20 @@ const SUGGESTIONS = [
   "Hoe kan ik mijn portfolio spreiden?",
 ]
 
+type RiskProfile = "laag" | "gemiddeld" | "hoog"
+
+const RISK_OPTIONS: { value: RiskProfile; label: string; desc: string }[] = [
+  { value: "laag", label: "Laag", desc: "ETFs, dividendaandelen, obligaties" },
+  { value: "gemiddeld", label: "Gemiddeld", desc: "Mix van groei en stabiliteit" },
+  { value: "hoog", label: "Hoog", desc: "Groeiaandelen, crypto, kleine bedrijven" },
+]
+
 export default function AdvisorPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [marketData, setMarketData] = useState("")
+  const [riskProfile, setRiskProfile] = useState<RiskProfile>("gemiddeld")
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -53,7 +62,7 @@ export default function AdvisorPage() {
       const res = await fetch("/api/advisor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages, marketData }),
+        body: JSON.stringify({ messages: newMessages, marketData, riskProfile }),
       })
 
       if (!res.body) throw new Error("Geen response")
@@ -71,8 +80,35 @@ export default function AdvisorPage() {
   return (
     <div className="max-w-3xl mx-auto px-6 py-10 flex flex-col" style={{ height: "calc(100vh - 65px)" }}>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">AI Adviseur</h1>
-        <p className="text-gray-400 text-sm mt-1">Stel vragen over markten, aandelen en beleggen</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">AI Adviseur</h1>
+            <p className="text-gray-400 text-sm mt-1">Stel vragen over markten, aandelen en beleggen</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-gray-500 mb-2 uppercase tracking-wide">Risicoprofiel</p>
+            <div className="flex bg-gray-900 border border-gray-800 rounded-xl p-1 gap-1">
+              {RISK_OPTIONS.map(opt => (
+                <button
+                  key={opt.value}
+                  onClick={() => setRiskProfile(opt.value)}
+                  title={opt.desc}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    riskProfile === opt.value
+                      ? opt.value === "laag"
+                        ? "bg-blue-600/20 text-blue-400 border border-blue-500/40"
+                        : opt.value === "hoog"
+                        ? "bg-red-600/20 text-red-400 border border-red-500/40"
+                        : "bg-yellow-600/20 text-yellow-400 border border-yellow-500/40"
+                      : "text-gray-500 hover:text-white"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto space-y-4 mb-6">
