@@ -73,6 +73,8 @@ export default function PortfolioPage() {
   const [analysis, setAnalysis] = useState("")
   const [analysisLoading, setAnalysisLoading] = useState(false)
   const [riskProfile, setRiskProfile] = useState<"laag" | "gemiddeld" | "hoog">("gemiddeld")
+  const [watAdvies, setWatAdvies] = useState("")
+  const [watLoading, setWatLoading] = useState(false)
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   async function loadPortfolio() {
@@ -93,6 +95,16 @@ export default function PortfolioPage() {
         })
     }
   }
+
+  const [marketData, setMarketData] = useState("")
+  useEffect(() => {
+    fetch("/api/quotes").then(r => r.json()).then((qs) => {
+      if (!Array.isArray(qs)) return
+      setMarketData(qs.map((q: { name: string; price: number; changePercent: number }) =>
+        `${q.name}: $${q.price.toFixed(2)} (${q.changePercent >= 0 ? "+" : ""}${q.changePercent.toFixed(2)}%)`
+      ).join("\n"))
+    }).catch(() => {})
+  }, [])
 
   useEffect(() => { loadPortfolio() }, [])
 
@@ -268,6 +280,59 @@ export default function PortfolioPage() {
               {isUp ? "+" : ""}{totalGainPct.toFixed(2)}%
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Wat moet ik nu doen */}
+      {!loading && positions.length > 0 && (
+        <div className="mb-6">
+          {!watAdvies && !watLoading && (
+            <button
+              onClick={async () => {
+                setWatLoading(true)
+                const res = await fetch("/api/wat-moet-ik-doen", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ positions, quotes, marketData, totalGainPct, riskProfile }),
+                })
+                const data = await res.json()
+                setWatAdvies(data.advies ?? "")
+                setWatLoading(false)
+              }}
+              className="w-full bg-green-600 hover:bg-green-500 transition-colors rounded-2xl px-6 py-5 text-left"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-lg font-bold">Wat moet ik nu doen?</p>
+                  <p className="text-green-200/70 text-sm mt-0.5">Krijg direct concreet advies op basis van jouw portfolio en de markt</p>
+                </div>
+                <span className="text-2xl ml-4">→</span>
+              </div>
+            </button>
+          )}
+
+          {watLoading && (
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 flex items-center gap-3 text-gray-400">
+              <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+              Even kijken wat het beste is voor jou...
+            </div>
+          )}
+
+          {watAdvies && (
+            <div className="bg-gray-900 border border-green-500/20 rounded-2xl p-6">
+              <div className="flex justify-between items-center mb-3">
+                <p className="font-semibold text-green-400">Wat moet ik nu doen?</p>
+                <button onClick={() => setWatAdvies("")} className="text-gray-500 hover:text-white text-sm transition-colors">↻ Opnieuw</button>
+              </div>
+              <div className="prose prose-invert prose-sm max-w-none">
+                {watAdvies.split("\n").map((line, i) => (
+                  <p key={i} className={line.startsWith("**") ? "font-semibold text-white" : "text-gray-300"}>
+                    {line.replace(/\*\*/g, "")}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
