@@ -15,6 +15,7 @@ const links = [
   { href: "/watchlist", label: "Watchlist" },
   { href: "/alerts", label: "Alerts" },
   { href: "/news", label: "Nieuws" },
+  { href: "/prijzen", label: "Prijzen" },
 ]
 
 export default function Navbar() {
