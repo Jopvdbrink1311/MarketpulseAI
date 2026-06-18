@@ -37,7 +37,7 @@ export default function AlertsPage() {
 
   async function loadAlerts() {
     const res = await fetch("/api/alerts")
-    if (!res.ok) return
+    if (!res.ok) { setLoading(false); return }
     const data: Alert[] = await res.json()
     setAlerts(data)
     setLoading(false)

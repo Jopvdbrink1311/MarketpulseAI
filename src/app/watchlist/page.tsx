@@ -27,7 +27,7 @@ export default function WatchlistPage() {
 
   async function loadWatchlist() {
     const res = await fetch("/api/watchlist")
-    if (!res.ok) return
+    if (!res.ok) { setLoading(false); return }
     const data: WatchItem[] = await res.json()
     setItems(data)
     setLoading(false)

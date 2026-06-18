@@ -79,7 +79,10 @@ export default function PortfolioPage() {
 
   async function loadPortfolio() {
     const res = await fetch("/api/portfolio")
-    if (!res.ok) return
+    if (!res.ok) {
+      setLoading(false)
+      return
+    }
     const data: Position[] = await res.json()
     setPositions(data)
     setLoading(false)
