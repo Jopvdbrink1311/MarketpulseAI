@@ -151,7 +151,7 @@ export default function PapierPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <div className="flex items-center gap-2.5 mb-1">
-            <h1 className="text-2xl font-bold">Papierbeleggen</h1>
+            <h1 className="text-2xl font-bold text-white">Papierbeleggen</h1>
             <span className="text-xs bg-yellow-500/15 text-yellow-400 border border-yellow-500/25 px-2.5 py-0.5 rounded-full font-medium tracking-wide">
               Simulatie
             </span>
@@ -331,12 +331,13 @@ export default function PapierPage() {
       {/* Positielijst */}
       {posities.length > 0 && (
         <div>
-          <div className="grid grid-cols-6 text-xs text-gray-600 px-4 pb-2 uppercase tracking-wider">
-            <span className="col-span-2">Aandeel</span>
+          <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] text-xs text-gray-600 px-4 pb-2 uppercase tracking-wider">
+            <span>Aandeel</span>
             <span className="text-right">Aantal</span>
             <span className="text-right">Koopprijs</span>
             <span className="text-right">Rendement</span>
             <span className="text-right">Waarde</span>
+            <span />
           </div>
           <div className="space-y-2">
             {posities.map(pos => {
@@ -348,8 +349,8 @@ export default function PapierPage() {
               const posUp = winst >= 0
 
               return (
-                <div key={pos.symbol} className="bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-xl px-4 py-3.5 grid grid-cols-6 items-center transition-all group">
-                  <button className="col-span-2 text-left" onClick={() => setGeselecteerd(pos)}>
+                <div key={pos.symbol} className="bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-xl px-4 py-3.5 grid grid-cols-[2fr_1fr_1fr_1fr_1fr_auto] items-center gap-2 transition-all group">
+                  <button className="text-left" onClick={() => setGeselecteerd(pos)}>
                     <p className="font-semibold text-sm group-hover:text-white transition-colors">{pos.name}</p>
                     <p className="text-gray-600 text-xs mt-0.5">{pos.symbol} · {pos.aankoopDatum}</p>
                   </button>
@@ -363,13 +364,11 @@ export default function PapierPage() {
                       {posUp ? "+" : ""}{fmtEur(winst)}
                     </p>
                   </div>
-                  <div className="text-right flex items-center justify-end gap-3">
-                    <p className="text-sm font-bold">{fmtEur(waarde)}</p>
-                    <button onClick={() => verkoop(pos.symbol)}
-                      className="text-xs text-gray-600 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 border border-gray-700 hover:border-red-500/30 px-2 py-1 rounded-lg">
-                      Verkoop
-                    </button>
-                  </div>
+                  <p className="text-right text-sm font-bold">{fmtEur(waarde)}</p>
+                  <button onClick={() => verkoop(pos.symbol)}
+                    className="text-xs text-gray-600 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 border border-gray-700 hover:border-red-500/30 px-2 py-1 rounded-lg whitespace-nowrap">
+                    Verkoop
+                  </button>
                 </div>
               )
             })}
